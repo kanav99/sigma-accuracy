@@ -12,11 +12,6 @@ sst2_train = load_dataset('SetFit/qnli', split='train')
 sst2_val = load_dataset('SetFit/qnli', split='validation')
 # sst2_test = load_dataset('sst2', split='test')
 
-print(sst2_train)
-print(sst2_val)
-
-exit()
-
 class Dataset(torch.utils.data.Dataset):
 
     def __init__(self, df):
