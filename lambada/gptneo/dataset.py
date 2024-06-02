@@ -44,9 +44,10 @@ def dumpmat(w):
     assert(len(w.shape) == 2)
     CI = w.shape[0]
     CO = w.shape[1]
-    for ci in range(CI):
-        for co in range(CO):
-            f.write(struct.pack('f', w[ci][co].item()))
+    # for ci in range(CI):
+    #     for co in range(CO):
+    #         f.write(struct.pack('f', w[ci][co].item()))
+    f.write(w.numpy().tobytes())
 
 def main():
 
