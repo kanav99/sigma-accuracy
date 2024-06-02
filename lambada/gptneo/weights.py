@@ -12,26 +12,38 @@ sd = model.state_dict()
 for k in sd.keys():
     sd[k] = sd[k].cpu()
 
+# mat = sd['transformer.h.0.attn.attention.k_proj.weight']
+# print(mat[0][0])
+# print(mat[0][1])
+# print(mat[0][2])
+
+# ptr = mat.numpy().tobytes()
+# print(struct.unpack('f', ptr[0:4]))
+# print(struct.unpack('f', ptr[4:8]))
+# print(struct.unpack('f', ptr[8:12]))
+# exit()
 # f = open('bert_sst2_90_t.dat', 'wb')
 f = open("weights.dat", 'wb')
 
 def dumpvec(x):
     # print(x.shape)
     assert(len(x.shape) == 1)
-    CI = x.shape[0]
-    for ci in range(CI):
-        f.write(struct.pack('f', x[ci].item()))
+    f.write(x.numpy().tobytes())
+    # CI = x.shape[0]
+    # for ci in range(CI):
+    #     f.write(struct.pack('f', x[ci].item()))
 
 def dumpmat(w):
     # print(w.shape)
     assert(len(w.shape) == 2)
     CI = w.shape[0]
     CO = w.shape[1]
-    for ci in range(CI):
-        for co in range(CO):
-            f.write(struct.pack('f', w[ci][co].item()))
+    f.write(w.numpy().tobytes())
+    # for ci in range(CI):
+    #     for co in range(CO):
+    #         f.write(struct.pack('f', w[ci][co].item()))
 
-for i in tqdm(range(32)):
+for i in tqdm(range(24)):
 
     dumpvec(sd['transformer.h.%d.ln_1.weight' % i])
     dumpvec(sd['transformer.h.%d.ln_1.bias' % i])
