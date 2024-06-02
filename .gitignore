@@ -1,1 +1,4 @@
 *.pth
+dataset/
+labels.txt
+weights.dat
