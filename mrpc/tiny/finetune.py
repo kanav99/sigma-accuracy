@@ -5,12 +5,12 @@ from torch.optim import Adam
 from tqdm import tqdm
 from transformers import BertTokenizer, BertModel
 from datasets import load_dataset
-
+# print(torch.seed())
+torch.manual_seed(12037088081360656104)
 tokenizer = BertTokenizer.from_pretrained('prajjwal1/bert-tiny')
 
 sst2_train = load_dataset('SetFit/mrpc', split='train')
 sst2_val = load_dataset('SetFit/mrpc', split='validation')
-# sst2_test = load_dataset('sst2', split='test')
 
 class Dataset(torch.utils.data.Dataset):
 
@@ -58,12 +58,19 @@ class BertClassifier(nn.Module):
         self.linear = nn.Linear(128, num_classes)
         self.relu = nn.ReLU()
 
-    def forward(self, input_id, mask):
+    def forward(self, input_id, mask, token_type_ids):
 
-        _, pooled_output = self.bert(input_ids= input_id, attention_mask=mask,return_dict=False)
+        _, pooled_output = self.bert(input_ids=input_id, attention_mask=mask, token_type_ids=token_type_ids, return_dict=False)
         dropout_output = self.dropout(pooled_output)
         linear_output = self.linear(dropout_output)
         final_layer = self.relu(linear_output)
+
+    # def forward(self, input_id, mask):
+
+    #     _, pooled_output = self.bert(input_ids=input_id, attention_mask=mask, return_dict=False)
+    #     dropout_output = self.dropout(pooled_output)
+    #     linear_output = self.linear(dropout_output)
+    #     final_layer = self.relu(linear_output)
 
         return final_layer
 
@@ -71,8 +78,8 @@ def train(model, train_data, val_data, learning_rate, epochs):
 
     train, val = Dataset(train_data), Dataset(val_data)
 
-    train_dataloader = torch.utils.data.DataLoader(train, batch_size=32, shuffle=True)
-    val_dataloader = torch.utils.data.DataLoader(val, batch_size=32)
+    train_dataloader = torch.utils.data.DataLoader(train, batch_size=8, shuffle=True)
+    val_dataloader = torch.utils.data.DataLoader(val, batch_size=8)
 
     use_cuda = torch.cuda.is_available()
     device = torch.device("cuda" if use_cuda else "cpu")
@@ -93,9 +100,11 @@ def train(model, train_data, val_data, learning_rate, epochs):
 
                 train_label = train_label.to(device)
                 mask = train_input['attention_mask'].squeeze(1).to(device)
+                token_type_ids = train_input['token_type_ids'].squeeze(1).to(device)
                 input_id = train_input['input_ids'].squeeze(1).to(device)
 
-                output = model(input_id, mask)
+                output = model(input_id, mask, token_type_ids)
+                # output = model(input_id, mask)
                 
                 batch_loss = criterion(output, train_label.long())
                 total_loss_train += batch_loss.item()
@@ -116,9 +125,11 @@ def train(model, train_data, val_data, learning_rate, epochs):
 
                     val_label = val_label.to(device)
                     mask = val_input['attention_mask'].squeeze(1).to(device)
+                    token_type_ids = val_input['token_type_ids'].squeeze(1).to(device)
                     input_id = val_input['input_ids'].squeeze(1).to(device)
 
-                    output = model(input_id, mask)
+                    output = model(input_id, mask, token_type_ids)
+                    # output = model(input_id, mask)
 
                     batch_loss = criterion(output, val_label.long())
                     total_loss_val += batch_loss.item()
@@ -139,3 +150,4 @@ LR = 2e-5
 train(model, sst2_train, sst2_val, LR, EPOCHS)
 
 torch.save(model.state_dict(), "model.pth")
+# pytorch accuracy: 71.1
