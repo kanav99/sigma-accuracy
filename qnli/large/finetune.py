@@ -10,7 +10,6 @@ tokenizer = BertTokenizer.from_pretrained('bert-large-cased')
 
 sst2_train = load_dataset('SetFit/qnli', split='train')
 sst2_val = load_dataset('SetFit/qnli', split='validation')
-# sst2_test = load_dataset('sst2', split='test')
 
 class Dataset(torch.utils.data.Dataset):
 
@@ -58,9 +57,9 @@ class BertClassifier(nn.Module):
         self.linear = nn.Linear(1024, num_classes)
         self.relu = nn.ReLU()
 
-    def forward(self, input_id, mask):
+    def forward(self, input_id, mask, token_type_ids):
 
-        _, pooled_output = self.bert(input_ids= input_id, attention_mask=mask,return_dict=False)
+        _, pooled_output = self.bert(input_ids=input_id, attention_mask=mask, token_type_ids=token_type_ids, return_dict=False)
         dropout_output = self.dropout(pooled_output)
         linear_output = self.linear(dropout_output)
         final_layer = self.relu(linear_output)
@@ -93,9 +92,11 @@ def train(model, train_data, val_data, learning_rate, epochs):
 
                 train_label = train_label.to(device)
                 mask = train_input['attention_mask'].squeeze(1).to(device)
+                token_type_ids = train_input['token_type_ids'].squeeze(1).to(device)
                 input_id = train_input['input_ids'].squeeze(1).to(device)
 
-                output = model(input_id, mask)
+                output = model(input_id, mask, token_type_ids)
+                # output = model(input_id, mask)
                 
                 batch_loss = criterion(output, train_label.long())
                 total_loss_train += batch_loss.item()
@@ -116,9 +117,11 @@ def train(model, train_data, val_data, learning_rate, epochs):
 
                     val_label = val_label.to(device)
                     mask = val_input['attention_mask'].squeeze(1).to(device)
+                    token_type_ids = val_input['token_type_ids'].squeeze(1).to(device)
                     input_id = val_input['input_ids'].squeeze(1).to(device)
 
-                    output = model(input_id, mask)
+                    output = model(input_id, mask, token_type_ids)
+                    # output = model(input_id, mask)
 
                     batch_loss = criterion(output, val_label.long())
                     total_loss_val += batch_loss.item()
