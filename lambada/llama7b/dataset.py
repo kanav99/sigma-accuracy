@@ -60,7 +60,7 @@ def main():
         prompt_modified = prompt.rsplit(' ', 1)[0]
 
         original_last_word = prompt.rsplit(' ', 1)[1]
-        original_last_word_token = tokenizer(" " + original_last_word, return_tensors="pt")['input_ids'][0][0].item()
+        original_last_word_token = tokenizer(original_last_word, return_tensors="pt")['input_ids'][0][1].item()
         g.write(str(original_last_word_token) + "\n")
         
         inputs = tokenizer(prompt_modified, return_tensors="pt")
