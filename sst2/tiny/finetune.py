@@ -5,7 +5,8 @@ from torch.optim import Adam
 from tqdm import tqdm
 from transformers import BertTokenizer, BertModel
 from datasets import load_dataset
-
+# print(torch.seed())
+torch.manual_seed(9181537070880695488)
 tokenizer = BertTokenizer.from_pretrained('prajjwal1/bert-tiny')
 
 sst2_train = load_dataset('sst2', split='train')
