@@ -2,8 +2,7 @@ import numpy as np
 from datasets import load_dataset
 import torch
 from tqdm import tqdm
-from transformers import GPTNeoForCausalLM, GPT2Tokenizer
-# from transformers import AutoTokenizer, AutoModelForCausalLM
+from transformers import AutoTokenizer, AutoModelForCausalLM
 import struct
 import sys
 
