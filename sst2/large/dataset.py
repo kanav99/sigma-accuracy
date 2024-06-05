@@ -6,7 +6,8 @@ from transformers import BertTokenizer, BertModel
 import struct
 import sys
 
-tokenizer = BertTokenizer.from_pretrained('bert-large-cased')
+from transformers import AutoTokenizer, AutoModelForSequenceClassification
+tokenizer = AutoTokenizer.from_pretrained('yoshitomo-matsubara/bert-large-uncased-mrpc')
 
 def tokenize(tokenizer, text_a, text_b=None):
     tokens_a = ["[CLS]"] + tokenizer.tokenize(text_a) + ["[SEP]"]

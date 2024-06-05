@@ -3,6 +3,7 @@ import struct
 import numpy as np
 from tqdm import tqdm
 import sys
+from transformers import AutoTokenizer, AutoModelForSequenceClassification
 
 model = AutoModelForSequenceClassification.from_pretrained("yoshitomo-matsubara/bert-large-uncased-mrpc")
 sd = model.state_dict()
