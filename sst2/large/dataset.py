@@ -6,8 +6,7 @@ from transformers import BertTokenizer, BertModel
 import struct
 import sys
 
-from transformers import AutoTokenizer, AutoModelForSequenceClassification
-tokenizer = AutoTokenizer.from_pretrained('yoshitomo-matsubara/bert-large-uncased-mrpc')
+tokenizer = BertTokenizer.from_pretrained('bert-large-cased')
 
 def tokenize(tokenizer, text_a, text_b=None):
     tokens_a = ["[CLS]"] + tokenizer.tokenize(text_a) + ["[SEP]"]
@@ -55,8 +54,7 @@ def main():
 
     # load dataset
     dataset = load_dataset("sst2", split="validation")
-    model = AutoModelForSequenceClassification.from_pretrained("yoshitomo-matsubara/bert-large-uncased-mrpc")
-    sd = model.state_dict()
+    sd = torch.load("model.pth", map_location=torch.device('cpu'))
 
     wse = sd["bert.embeddings.token_type_embeddings.weight"]
     wte = sd["bert.embeddings.word_embeddings.weight"]

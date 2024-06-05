@@ -3,10 +3,10 @@ from torch import nn
 import numpy as np
 from torch.optim import Adam
 from tqdm import tqdm
-from transformers import AutoTokenizer, AutoModelForSequenceClassification
+from transformers import BertTokenizer, BertModel
 from datasets import load_dataset
 
-tokenizer = AutoTokenizer.from_pretrained("yoshitomo-matsubara/bert-large-uncased-sst2")
+tokenizer = BertTokenizer.from_pretrained('bert-base-cased')
 
 
 sst2_val = load_dataset('sst2', split='validation')
@@ -45,7 +45,7 @@ class Dataset(torch.utils.data.Dataset):
         batch_y = self.get_batch_labels(idx)
 
         return batch_texts, batch_y
-'''
+
 class BertClassifier(nn.Module):
 
     def __init__(self, num_classes, dropout=0.5):
@@ -66,12 +66,9 @@ class BertClassifier(nn.Module):
 
         return final_layer
 
-model = BertClassifier(3)
-model.load_state_dict(torch.load("model_large_mnli.pth", map_location=torch.device('cpu')))
+model = BertClassifier(2)
+model.load_state_dict(torch.load("model.pth", map_location=torch.device('cpu')))
 model.eval()
-'''
-
-model = AutoModelForSequenceClassification.from_pretrained("yoshitomo-matsubara/bert-large-uncased-sst2")
 
 total_acc_val = 0
 val_dataloader = torch.utils.data.DataLoader(Dataset(sst2_val), batch_size=32)
@@ -93,7 +90,7 @@ with torch.no_grad():
         # token_type_ids = val_input['token_type_ids'].squeeze(1).to(device)
         input_id = val_input['input_ids'].squeeze(1).to(device)
 
-        output = model(input_id, mask).logits
+        output = model(input_id, mask)
         
         acc = (output.argmax(dim=1) == val_label).sum().item()
         total_acc_val += acc        

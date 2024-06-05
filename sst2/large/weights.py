@@ -3,10 +3,8 @@ import struct
 import numpy as np
 from tqdm import tqdm
 import sys
-from transformers import AutoTokenizer, AutoModelForSequenceClassification
 
-model = AutoModelForSequenceClassification.from_pretrained("yoshitomo-matsubara/bert-large-uncased-mrpc")
-sd = model.state_dict()
+sd = torch.load("model.pth", map_location=torch.device('cpu'))
 
 for k in sd.keys():
     sd[k] = sd[k].cpu()
@@ -71,7 +69,7 @@ for i in tqdm(range(24)):
     
 dumpmat(sd["bert.pooler.dense.weight"].T)
 dumpvec(sd["bert.pooler.dense.bias"])
-dumpmat(sd["classifier.weight"].T)
-dumpvec(sd["classifier.bias"])
+dumpmat(sd["linear.weight"].T)
+dumpvec(sd["linear.bias"])
 
 f.close()
