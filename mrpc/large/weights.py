@@ -14,7 +14,7 @@ for k in sd.keys():
 
 # f = open('bert_sst2_90_t.dat', 'wb')
 # f = open(sys.argv[2], 'wb')
-f = open("weights", 'wb')
+f = open("weights.dat", 'wb')
 
 def dumpvec(x):
     # print(x.shape)
