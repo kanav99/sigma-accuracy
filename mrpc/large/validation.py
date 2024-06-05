@@ -5,8 +5,9 @@ from torch.optim import Adam
 from tqdm import tqdm
 from transformers import BertTokenizer, BertModel
 from datasets import load_dataset
+from transformers import AutoTokenizer, AutoModelForSequenceClassification
 
-tokenizer = BertTokenizer.from_pretrained('yoshitomo-matsubara/bert-large-uncased-mrpc')
+tokenizer = AutoTokenizer.from_pretrained('yoshitomo-matsubara/bert-large-uncased-mrpc')
 model = AutoModelForSequenceClassification.from_pretrained("yoshitomo-matsubara/bert-large-uncased-mrpc")
 
 sst2_val = load_dataset('SetFit/mrpc', split='validation')
