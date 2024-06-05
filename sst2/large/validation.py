@@ -87,10 +87,10 @@ with torch.no_grad():
         tot += len(val_label)
         val_label = val_label.to(device)
         mask = val_input['attention_mask'].squeeze(1).to(device)
-        # token_type_ids = val_input['token_type_ids'].squeeze(1).to(device)
+        token_type_ids = val_input['token_type_ids'].squeeze(1).to(device)
         input_id = val_input['input_ids'].squeeze(1).to(device)
 
-        output = model(input_id, mask)
+        output = model(input_id, mask, token_type_ids)
         
         acc = (output.argmax(dim=1) == val_label).sum().item()
         total_acc_val += acc        
