@@ -70,8 +70,8 @@ def main():
     g = open('labels.txt', 'w')
 
     i = 0
-    for text_a, text_b, label in tqdm(zip(dataset["sentence"], dataset["label"])):
-        _, input_ids, segment_ids = tokenize(tokenizer, text_a, text_b)
+    for text_a, label in tqdm(zip(dataset["sentence"], dataset["label"])):
+        _, input_ids, segment_ids = tokenize(tokenizer, text_a)
         input_ids, segment_ids = input_ids[:max_len], segment_ids[:max_len]
         x = wte[input_ids] + wpe[range(len(input_ids))] + wse[segment_ids]
         g.write(str(label) + '\n')
