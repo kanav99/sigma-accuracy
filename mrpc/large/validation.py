@@ -65,7 +65,7 @@ with torch.no_grad():
     for val_input, val_label in val_dataloader:
         tot += len(val_label)
         val_label = val_label.to(device)
-        mask = val_input['attention_mask'].to(device)
+        mask = val_input['attention_mask'].squeeze(1).to(device)
         # token_type_ids = val_input['token_type_ids'].squeeze(1).to(device)
         input_id = val_input['input_ids'].squeeze(1).to(device)
 
