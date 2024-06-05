@@ -1,3 +1,6 @@
+# using yoshitomo-matsubara, no need finetuning
+exit()
+
 import torch
 from torch import nn
 import numpy as np
