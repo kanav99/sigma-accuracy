@@ -32,24 +32,25 @@ def close_file():
     f = None
 
 def dumpvec(x):
-    global f
-    if f == None:
-        return
+    # print(x.shape)
     assert(len(x.shape) == 1)
     CI = x.shape[0]
-    for ci in range(CI):
-        f.write(struct.pack('f', x[ci].item()))
+    try:
+        x = x.numpy()
+    except:
+        pass
+    f.write(x.tobytes())
 
 def dumpmat(w):
-    global f
-    if f == None:
-        return
+    # print(w.shape)
     assert(len(w.shape) == 2)
     CI = w.shape[0]
     CO = w.shape[1]
-    for ci in range(CI):
-        for co in range(CO):
-            f.write(struct.pack('f', w[ci][co].item()))
+    try:
+        w = w.numpy()
+    except:
+        pass
+    f.write(w.tobytes())
 
 def main():
 
