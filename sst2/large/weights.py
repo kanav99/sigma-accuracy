@@ -71,7 +71,7 @@ for i in tqdm(range(24)):
     
 dumpmat(sd["bert.pooler.dense.weight"].T)
 dumpvec(sd["bert.pooler.dense.bias"])
-dumpmat(sd["linear.weight"].T)
-dumpvec(sd["linear.bias"])
+dumpmat(sd["classifier.weight"].T)
+dumpvec(sd["classifier.bias"])
 
 f.close()
