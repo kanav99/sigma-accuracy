@@ -54,7 +54,8 @@ def main():
 
     # load dataset
     dataset = load_dataset("sst2", split="validation")
-    sd = torch.load("model.pth", map_location=torch.device('cpu'))
+    model = AutoModelForSequenceClassification.from_pretrained("yoshitomo-matsubara/bert-large-uncased-mrpc")
+    sd = model.state_dict()
 
     wse = sd["bert.embeddings.token_type_embeddings.weight"]
     wte = sd["bert.embeddings.word_embeddings.weight"]

@@ -4,7 +4,8 @@ import numpy as np
 from tqdm import tqdm
 import sys
 
-sd = torch.load("model.pth", map_location=torch.device('cpu'))
+model = AutoModelForSequenceClassification.from_pretrained("yoshitomo-matsubara/bert-large-uncased-mrpc")
+sd = model.state_dict()
 
 for k in sd.keys():
     sd[k] = sd[k].cpu()
