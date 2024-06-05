@@ -3,12 +3,17 @@ import struct
 import numpy as np
 from tqdm import tqdm
 import sys
+from transformers import AutoModelForSequenceClassification
 
-sd = torch.load("model.pth", map_location=torch.device('cpu'))
+# sd = torch.load(sys.argv[1], map_location=torch.device('cpu'))
+model = AutoModelForSequenceClassification.from_pretrained("yoshitomo-matsubara/bert-large-uncased-sst2")
+sd = model.state_dict()
 
 for k in sd.keys():
     sd[k] = sd[k].cpu()
 
+# f = open('bert_sst2_90_t.dat', 'wb')
+# f = open(sys.argv[2], 'wb')
 f = open("weights.dat", 'wb')
 
 def dumpvec(x):
@@ -69,7 +74,9 @@ for i in tqdm(range(24)):
     
 dumpmat(sd["bert.pooler.dense.weight"].T)
 dumpvec(sd["bert.pooler.dense.bias"])
-dumpmat(sd["linear.weight"].T)
-dumpvec(sd["linear.bias"])
+# dumpmat(sd["linear.weight"].T)
+# dumpvec(sd["linear.bias"])
+dumpmat(sd["classifier.weight"].T)
+dumpvec(sd["classifier.bias"])
 
 f.close()

@@ -2,11 +2,13 @@ import numpy as np
 from datasets import load_dataset
 import torch
 from tqdm import tqdm
-from transformers import BertTokenizer, BertModel
+# from transformers import BertTokenizer, BertModel
+from transformers import AutoTokenizer, AutoModelForSequenceClassification
 import struct
 import sys
 
-tokenizer = BertTokenizer.from_pretrained('bert-large-cased')
+# tokenizer = BertTokenizer.from_pretrained('bert-base-cased')
+tokenizer = AutoTokenizer.from_pretrained("yoshitomo-matsubara/bert-large-uncased-sst2")
 
 def tokenize(tokenizer, text_a, text_b=None):
     tokens_a = ["[CLS]"] + tokenizer.tokenize(text_a) + ["[SEP]"]
@@ -54,30 +56,30 @@ def main():
 
     # load dataset
     dataset = load_dataset("sst2", split="validation")
-    sd = torch.load("model.pth", map_location=torch.device('cpu'))
+    # sd = torch.load("model_mrpc.pth", map_location=torch.device('cpu'))
+    model = AutoModelForSequenceClassification.from_pretrained("yoshitomo-matsubara/bert-large-uncased-sst2")
+    sd = model.state_dict()
 
     wse = sd["bert.embeddings.token_type_embeddings.weight"]
     wte = sd["bert.embeddings.word_embeddings.weight"]
     wpe = sd["bert.embeddings.position_embeddings.weight"]
 
     max_len = 512
-    n_head = 2
-
-    g = open("labels.txt","w")
+    # n_head = 12
+    n_head = 16
+    g = open('labels.txt', 'w')
 
     i = 0
-    for text, label in tqdm(zip(dataset["sentence"], dataset["label"])):
-        _, input_ids, segment_ids = tokenize(tokenizer, text)
+    for text_a, label in tqdm(zip(dataset["sentence"], dataset["label"])):
+        _, input_ids, segment_ids = tokenize(tokenizer, text_a)
         input_ids, segment_ids = input_ids[:max_len], segment_ids[:max_len]
         x = wte[input_ids] + wpe[range(len(input_ids))] + wse[segment_ids]
-        # print(x.shape)
-        g.write(str(label) + "\n")
+        g.write(str(label) + '\n')
         set_file('./dataset/' + str(i) + '.dat')
         dumpmat(x)
         close_file()
         # print(label)
         i += 1
-    
     g.close()
 
 
